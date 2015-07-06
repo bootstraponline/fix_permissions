@@ -36,7 +36,7 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
         try {
             Files.setPosixFilePermissions(path, dirPermission);
         } catch (Exception e) {
-            System.out.println("Set permission " + permission + " failed: " + path + " Exception: " + e.getMessage());
+            System.out.println("Set permission " + permission + " failed: " + path + " Exception: " + e.toString());
         }
     }
 
@@ -60,7 +60,7 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-        System.out.println("Visit failed: " + file + " Exception: " + exc.getMessage());
+        System.out.println("Visit failed: " + file + " Exception: " + exc.toString());
         return FileVisitResult.CONTINUE;
     }
 }

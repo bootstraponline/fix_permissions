@@ -9,15 +9,21 @@ public class Main {
     private static Path path;
     private static PosixPermissionVisitor posixPermissionVisitor = new PosixPermissionVisitor();
 
+    private static void puts(String string) {
+        System.out.println(string);
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
             pathArg = args[0];
         } else {
-            System.out.println("Usage: java -jar fix_permissions.jar path");
+            puts("Usage: java -jar fix_permissions.jar path");
+            System.exit(0);
         }
 
         path = Paths.get(pathArg);
 
+        puts("Walking: " + path);
         Files.walkFileTree(path, posixPermissionVisitor);
     }
 }

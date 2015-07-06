@@ -2,8 +2,10 @@
 
 Simple Java file visitor to fix dir and file posix permissions.
 
-build:
+#### build
 
-`gradle build`
+> gradle clean build
 
-jar is saved to build/libs/fix_permissions.jar
+#### usage
+
+> java -jar ./build/libs/fix_permissions.jar some_path
