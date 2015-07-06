@@ -18,7 +18,7 @@ drwxr-xr-x   2 user  wheel   68 Jul  6 12:17 tmp    --- folder - 755
 -rw-r--r--   1 user  wheel    1 Jul  6 12:18 ok.txt --- file   - 644
 */
 
-public class Visitor extends SimpleFileVisitor<Path> {
+public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
     private static Set<PosixFilePermission> dirPermission;
     private static Set<PosixFilePermission> filePermission;
 
@@ -32,21 +32,35 @@ public class Visitor extends SimpleFileVisitor<Path> {
         filePermission = PosixFilePermissions.fromString("rw-" + "r--" + "r--");
     }
 
+    private static void setPermission(Path path, Set<PosixFilePermission> permission) {
+        try {
+            Files.setPosixFilePermissions(path, dirPermission);
+        } catch (Exception e) {
+            System.out.println("Set permission " + permission + " failed: " + path + " Exception: " + e.getMessage());
+        }
+    }
+
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        Files.setPosixFilePermissions(dir, dirPermission);
+        setPermission(dir, dirPermission);
 
         return super.preVisitDirectory(dir, attrs);
     }
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        Files.setPosixFilePermissions(file, filePermission);
+        setPermission(file, filePermission);
 
         // todo: optionally set executable permission if it's already set on the file
         // allows preserving executable binaries as executable files although sometimes
         // it's desirable to fix permissions and always set 644.
 
         return super.visitFile(file, attrs);
+    }
+
+    @Override
+    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        System.out.println("Visit failed: " + file + " Exception: " + exc.getMessage());
+        return FileVisitResult.CONTINUE;
     }
 }
