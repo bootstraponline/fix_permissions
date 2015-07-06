@@ -21,6 +21,8 @@ drwxr-xr-x   2 user  wheel   68 Jul  6 12:17 tmp    --- folder - 755
 public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
     private static Set<PosixFilePermission> dirPermission;
     private static Set<PosixFilePermission> filePermission;
+    public static int fileCount = 0;
+    public static int dirCount = 0;
 
     static {
         // r = 4, w = 2, x = 1
@@ -34,7 +36,7 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
 
     private static void setPermission(Path path, Set<PosixFilePermission> permission) {
         try {
-            Files.setPosixFilePermissions(path, dirPermission);
+            Files.setPosixFilePermissions(path, permission);
         } catch (Exception e) {
             System.out.println("Set permission " + permission + " failed: " + path + " Exception: " + e.toString());
         }
@@ -42,6 +44,7 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        dirCount++;
         setPermission(dir, dirPermission);
 
         return super.preVisitDirectory(dir, attrs);
@@ -49,6 +52,7 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+        fileCount++;
         setPermission(file, filePermission);
 
         // todo: optionally set executable permission if it's already set on the file

@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 public class Main {
     private static String pathArg;
     private static Path path;
-    private static PosixPermissionVisitor posixPermissionVisitor = new PosixPermissionVisitor();
+    private static PosixPermissionVisitor visitor = new PosixPermissionVisitor();
 
     private static void puts(String string) {
         System.out.println(string);
@@ -24,6 +24,8 @@ public class Main {
         path = Paths.get(pathArg);
 
         puts("Walking: " + path);
-        Files.walkFileTree(path, posixPermissionVisitor);
+        Files.walkFileTree(path, visitor);
+        puts("Walked " + visitor.dirCount + " folders and "
+                + visitor.fileCount + " files");
     }
 }
