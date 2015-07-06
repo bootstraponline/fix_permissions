@@ -3,7 +3,7 @@
 Simple Java file visitor to fix dir and file posix permissions.
 Symbolic links are skipped.
 By default directories are set to 755 and files are set to 644.
-Files already set to 744 will not be changed to 644 (execute bit preserved for owner).
+If a file has execute set then the file will be set to 755.
 
 #### build
 

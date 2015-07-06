@@ -8,10 +8,10 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.*;
 import java.util.Set;
+
+import java.nio.file.attribute.PosixFileAttributes;
 
 import static java.nio.file.attribute.PosixFilePermission.*;
 /*
@@ -40,8 +40,8 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
         // File | rw- r-- r-- | 644 | default
         filePermission = permissionString("rw-" + "r--" + "r--");
 
-        // File | rwx r-- r-- | 744 | only for select files
-        fileExecutePermission = permissionString("rwx" + "r--" + "r--");
+        // File | rwx r-- r-- | 755 | only for select files
+        fileExecutePermission = dirPermission;
 
         executeSet = ImmutableSet.of(OWNER_EXECUTE, GROUP_EXECUTE, OTHERS_EXECUTE);
     }
@@ -76,7 +76,8 @@ public class PosixPermissionVisitor extends SimpleFileVisitor<Path> {
             Set<PosixFilePermission> permission = filePermission;
 
             if (preserveExecuteFile) {
-                boolean anyExecuteEnabled = !Sets.intersection(permission, executeSet).isEmpty();
+                final Set<PosixFilePermission> targetPermissions = Files.readAttributes(file, PosixFileAttributes.class).permissions();
+                boolean anyExecuteEnabled = !Sets.intersection(targetPermissions, executeSet).isEmpty();
                 if (anyExecuteEnabled) {
                     permission = fileExecutePermission;
                 }
