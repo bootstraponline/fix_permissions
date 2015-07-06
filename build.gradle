@@ -1,13 +1,29 @@
 apply plugin: 'application'
+apply plugin: 'maven'
 
 // Required because src/ isn't the default source location
 // gradle will look for src/main/java
 sourceSets.main.java.srcDirs = ['src']
 mainClassName = 'com.bootstraponline.Main'
 
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:18.0'
+}
+
 // Required to 'fix no main manifest attribute'
+// jar must be after dependencies
+// https://gist.github.com/simon04/6865179#comment-1392252
 jar {
-    manifest {
-        attributes 'Main-Class': mainClassName
+    doFirst {
+        manifest {
+            if (!configurations.runtime.isEmpty()) {
+                attributes('Main-Class': mainClassName,
+                           'Class-Path': configurations.runtime.collect{it.toURI().toString()}.join(' '))
+            }
+        }
     }
 }

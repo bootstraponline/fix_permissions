@@ -23,6 +23,9 @@ public class Main {
 
         path = Paths.get(pathArg);
 
+        // Retain execute bit on files. 755
+        visitor.preserveExecuteFile = true;
+
         puts("Walking: " + path);
         Files.walkFileTree(path, visitor);
         puts("Walked " + visitor.dirCount + " folders and "
